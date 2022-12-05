@@ -36,7 +36,7 @@ std::ostream& operator<<(std::ostream& os, const Range &range)
 
 int main()
 {
-	const char* inputFilepath = "../data/test.txt";
+	const char* inputFilepath = "../data/input.txt";
 	
 	std::filesystem::path canonical_path;
 	try
@@ -58,7 +58,7 @@ int main()
 	}
 	
 	std::string line;
-	std::vector<Range> inputRanges;
+	int fullyOverlapedRanges = 0;
 	while (std::getline(file, line))
 	{
 		// The format of a line is: S1-E1,S2-E2
@@ -86,35 +86,28 @@ int main()
 			std::cout <<  "Error tratando de connvertir a entero: " << canonical_path;
 			return 3;
 		}
-		inputRanges.emplace_back(s1, e1);
-		inputRanges.emplace_back(s2, e2);
+		
+		Range range1(s1, e1);
+		Range range2(s2, e2);
+		if (range1.isContained(range2))
+		{
+			std::cout << range1 << " is contained in " << range2 << "\n";
+			fullyOverlapedRanges++;
+		}
+		else if (range2.isContained(range1))
+		{
+			std::cout << range2 << " is contained in " << range1 << "\n";
+			fullyOverlapedRanges++;
+		}
+		else
+		{
+			
+		}
 	}
 	file.close();
 	
-	// Sorting from lower to greater disntannce between start and end. In case of draw, the one
-	// with the earlier start is lower. This helps us make some assumptions when looping
-	std::sort(inputRanges.begin(), inputRanges.end());
-	int fullyOverlapedRanges = 0;
-	for (size_t i = 0; i < inputRanges.size(); i++)
-	{
-		const auto& range1 = inputRanges[i];
-		bool rannge1IsContained = false;
-		for (size_t j = i+1; j < inputRanges.size(); j++)
-		{
-			const auto& range2 = inputRanges[j];
-			if (range1.isContained(range2))
-			{
-				std::cout << range1 << " is contained in " << range2 << "\n";
-				rannge1IsContained = true;
-				break;
-			}
-		}
-		if (rannge1IsContained)
-		{
-			fullyOverlapedRanges++;
-		}
-	}
-	std::cout << "There are " << fullyOverlapedRanges << " fully overlaped ranges" << std::endl;
+	
+	std::cout << "There are " << "\033[32m" << fullyOverlapedRanges << "\033[m" << " fully overlaped ranges" << std::endl;
 	
 	std::system("pause");
 	return 0;
