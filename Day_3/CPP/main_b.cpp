@@ -52,9 +52,10 @@ int main()
 			lineSet[linesInSet] = line;
 			linesInSet++;
 			largestLineLenngth = line.size() > largestLineLenngth ? line.size() : largestLineLenngth; 
-			continue;
 		}
 		
+		if (linesInSet != LINES_PER_SET) continue;
+			
 		// Searching for the badge. It's a char present in all the lines in the set
 		char badgeChar = '-';
 		std::array<std::set<char>, LINES_PER_SET> charsInLines;
@@ -125,7 +126,7 @@ int main()
 	
 	if (linesInSet > 0)
 	{
-		std::cout << "Error:El archivo no está bien formateado. EL caracter\n";
+		std::cout << "Error:El archivo no está bien formateado. Sobran líneas\n";
 		return 4;
 	}
 	
