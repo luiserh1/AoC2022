@@ -22,8 +22,7 @@ struct Range
 		return (start <= o.start && end >= o.start) ||
 			   (end >= o.start && end <= o.end)     ||
 			   (o.start <= start && o.end >= start) ||
-			   (o.end >= start && o.end <= end)		||
-			   isContained(o);
+			   (o.end >= start && o.end <= end)
 	}
 	
 	bool operator<(const Range& o) const
