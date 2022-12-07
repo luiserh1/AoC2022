@@ -4,9 +4,19 @@
 #include <vector>		// std::vector
 #include <filesystem>	// Rutas canónicas
 
+void printStack(int id, std::vector<char> stack)
+{
+	std::cout << "\"" << id << "\": ";
+	for (char c : stack)
+	{
+		std::cout << c << " ";
+	}
+	std::cout << "\n";
+}
+
 int main()
 {
-	const char* inputFilepath = "../data/test.txt";
+	const char* inputFilepath = "../data/input.txt";
 
 	std::filesystem::path canonical_path;
 	try
@@ -37,7 +47,8 @@ int main()
 		if (numStacks == static_cast<size_t>(-1))
 		{
 			numStacks = lineSize / 4 + 1;
-			vecStacks.resize(10);
+			vecStacks.resize(numStacks);
+			std::cout << "Initiallizing problem for " << numStacks << " stacks\n";
 		}
 		
 		// Getting the input
@@ -76,12 +87,12 @@ int main()
 					if (line[i] == '[')
 					{
 						// There is a crate
-						vecStacks[stack].push_back(line[i+1]);
+						vecStacks[stack].insert(vecStacks[stack].begin(), line[i+1]);
 					}
 					else if (line[i+1] != ' ')
 					{
 						// The last line, it contains the stack ID
-						std::cout << "The stack \"" << line[i+1] << "\" contains: ";
+						std::cout << "\"" << line[i+1] << "\": ";
 						for (char c : vecStacks[stack]) std::cout << c << " ";
 						std::cout << "\n";
 					}
@@ -120,17 +131,34 @@ int main()
 			}
 			
 			std::cout << "Moving " << numCrates << " crates from: " << srcStack << " to " << dstStack << "\n";
-			auto bottomIt = vecStacks[srcStack].end() - numCrates;
-			auto topIt = vecStacks[srcStack].end();
-			if (vecStacks[dstStack].size() + numCrates > vecStacks[dstStack].capacity()) 
+			auto bottomIt = vecStacks[srcStack-1].end() - numCrates;
+			auto topIt = vecStacks[srcStack-1].end();
+			for (auto it = bottomIt; it != topIt; it++)
 			{
-				vecStacks[dstStack].resize(vecStacks[dstStack].size() + numCrates);
+				vecStacks[dstStack-1].push_back(*it);
 			}
-			std::move(bottomIt, topIt, std::back_inserter(vecStacks[dstStack]));
+			vecStacks[srcStack-1].erase(bottomIt, topIt);
+			for (size_t  i = 0; i < numStacks; i++)
+			{
+				printStack(i+1, vecStacks[i]);
+			}
 		}
 		
 	}
 	file.close();
+	
+	std::cout << "Thi final stacks look like this:\n";
+	for (size_t i = 0; i < vecStacks.size(); i++)
+	{
+		printStack(i+1, vecStacks[i]);
+	}
+	
+	std::cout << "Being the final top crates: ";
+	for (const auto& stack : vecStacks)
+	{
+		std::cout << stack[stack.size()-1];
+	}
+	std::cout << std::endl;
 	
 	std::system("pause");
 	return 0;
