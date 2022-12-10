@@ -2,6 +2,7 @@
 #include <fstream>		// Lectura de archivo de input
 #include <string>		// std::string
 #include <vector>		// std::vector
+#include <set>			// std::vector
 #include <memory>		// std::shared_ptr
 #include <iomanip>		// std::setw, std::left
 #include <filesystem>	// Rutas canónicas
@@ -121,32 +122,6 @@ private:
 	std::vector<std::shared_ptr<DirectoryElement>> m_elements;
 };
 
-int getSmallestDirOverGivenSize(std::shared_ptr<Directory> root, int currentMin, int lowerBound)
-{
-	for (auto e : root->getElements())
-	{
-		auto subdir = std::dynamic_pointer_cast<Directory>(e);
-		if (subdir)
-		{
-			int subdirSize = subdir->getSize();
-			std::cout << "Visiting " << subdir->getName() << " at depth " << subdir->getDepth() << " Its size is: " << subdirSize;
-			if (subdirSize < currentMin && subdirSize > lowerBound)
-			{
-				currentMin = subdirSize;
-				std::cout << ". New smallest dir over " << lowerBound << " found!";
-			}
-			std::cout << "\n";
-			currentMin = getSmallestDirOverGivenSize(subdir, currentMin, lowerBound);				
-		}
-	}
-	return currentMin;
-}
-
-int getSmallestDirOverGivenSize(std::shared_ptr<Directory> root, int lowerBound=8381165)
-{
-	return getSmallestDirOverGivenSize(root, root->getSize(), lowerBound);
-}
-
 int main()
 {
 	const char* inputFilepath = "../data/input.txt";
@@ -247,8 +222,40 @@ int main()
 	rootDir->print();
 	
 	std::cout << "The total size of the root element is: " << rootDir->getSize() << "\n";
-	int smallestDirOverGivenSize = getSmallestDirOverGivenSize(rootDir);
-	std::cout << "The size of the smallest directory fitting the request is: " << smallestDirOverGivenSize << "\n";
+	std::vector<std::shared_ptr<Directory>> dirsToExplore = {rootDir};
+	std::set<int> dirSizes;
+	while (!dirsToExplore.empty())
+	{
+		std::vector<std::shared_ptr<Directory>> newDirs;
+		for (auto dir : dirsToExplore)
+		{
+			for (auto element : dir->getElements())
+			{
+				auto newDirToExplore = std::dynamic_pointer_cast<Directory>(element);
+				if (newDirToExplore)
+				{
+					newDirs.push_back(newDirToExplore);
+				}
+			}
+			int dirSize = dir->getSize();
+			dirSizes.emplace(dirSize);
+		}
+		dirsToExplore = newDirs;
+	}
+	
+	std::cout << "The sizes of the directories fitting the request are:\n";
+	int found = false;
+	for (int size : dirSizes)
+	{
+		if (!found && size + 21618835 > 30000000)
+		{
+			std::cout << "\033[32m" << size << "\n";
+			found = true;
+			continue;
+		}
+		
+		std::cout << "\033[m" << size << "\n";
+	}
 	
 	std::system("pause");
 	return 0;
