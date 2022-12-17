@@ -75,7 +75,7 @@ int main()
 	std::cout << "The format is correct! Solving the problem...\n\n";
 	
 	// Looking left
-	std::vector<int> treesSeenLookingLeft;
+	std::vector<std::vector<int>> treesSeenLookingLeft;
 	treesSeenLookingLeft.reserve(treesPerLine);
 	treesSeenLookingLeft[0].resize(treesPerLine, 0);
 	treesSeenLookingLeft[treesPerLine - 1].resize(treesPerLine, 0);
@@ -93,6 +93,14 @@ int main()
 			treesSeenLookingLeft[x][y] = visibleTrees;
 		}
 	}
+	
+	// Looking right
+	std::vector<std::vector<int>> treesSeenLookingRight;
+	treesSeenLookingRight.reserve(treesPerLine);
+	treesSeenLookingRight[0].resize(treesPerLine, 0);
+	treesSeenLookingRight[treesPerLine - 1].resize(treesPerLine, 0);
+	
+
 	
 	std::system("pause");
 	return 0;

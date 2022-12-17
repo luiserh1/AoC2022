@@ -7,7 +7,7 @@
 int main()
 {
 	const char* inputFilepath = "../data/input.txt";
-	
+	std::cout << "Starting..." << std::endl;
 	std::filesystem::path canonical_path;
 	try
 	{
@@ -36,11 +36,14 @@ int main()
 		treesLine.reserve(line.size());
 		for (char c : line)
 		{
+			if (c == '\r') continue;
+
 			int asciiValue = static_cast<int>(c);
-			int treeHeight = asciiValue - 48;
+			int treeHeight = asciiValue - static_cast<int>('0');
 			if (treeHeight < 0 || treeHeight > 10)
 			{
-				std::cout <<  "Wrong format! Chars must be integers from 0 to 9";
+				std::cout << "Wrong format! Chars must be integers from 0 to 9. Reading \"";
+				std::cout << c << "\" from: " << line << std::endl;
 				return 4;
 			}
 			treesLine.push_back(treeHeight);
